@@ -13,14 +13,7 @@ _IS_VERCEL = os.environ.get('VERCEL', '') == '1'
 _IS_RENDER = os.environ.get('RENDER', '') == '1'
 
 if _IS_VERCEL or _IS_RENDER:
-    # 1) 把 node_bin 加入 PATH，确保 execjs 能找到 Node.js
-    _node_bin = os.path.join(os.path.dirname(__file__), 'node_bin', 'bin')
-    if os.path.isdir(_node_bin):
-        os.environ['PATH'] = _node_bin + os.pathsep + os.environ.get('PATH', '')
-    elif os.path.isdir(os.path.join(os.path.dirname(__file__), 'node_bin')):
-        os.environ['PATH'] = os.path.join(os.path.dirname(__file__), 'node_bin') + os.pathsep + os.environ.get('PATH', '')
-
-    # 2) tempfile 使用 /tmp（Vercel 只允许写 /tmp）
+    # 云平台：只设置临时目录
     tempfile.tempdir = '/tmp'
 
 app = Flask(__name__)

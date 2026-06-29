@@ -1,26 +1,25 @@
 #!/bin/bash
-# Vercel 构建脚本 —— 下载 Node.js 供 Python execjs 使用
+# Render 构建脚本 — 安装 Python 和 npm 依赖
 set -e
 
-echo "🚀 Vercel build: 安装 Node.js..."
+echo "📦 检查系统 Node.js..."
+which node && echo "✅ 系统 Node.js: $(node -v)" || echo "⚠️ 无系统 Node.js"
+which npm && echo "✅ 系统 npm: $(npm -v)" || echo "⚠️ 无系统 npm"
 
-mkdir -p node_bin
+# 安装 npm 依赖（crypto-js 等）
+echo "📦 安装 npm 依赖..."
+npm install --production 2>&1 || echo "⚠️ npm install 失败"
 
-NODE_VERSION="20.18.0"
-NODE_URL="https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.xz"
-
-echo "下载 Node.js ${NODE_VERSION}..."
-curl -sL "$NODE_URL" | tar xJ -C node_bin --strip-components=1 2>/dev/null || {
-  NODE_URL="https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.gz"
-  curl -sL "$NODE_URL" | tar xz -C node_bin --strip-components=1
-}
-
-if [ -f node_bin/bin/node ]; then
-  echo "✅ Node.js 安装成功: $(node_bin/bin/node -v)"
-  chmod +x node_bin/bin/node node_bin/bin/npm 2>/dev/null || true
+# 验证
+if [ -f "node_modules/crypto-js/index.js" ]; then
+    echo "✅ crypto-js 就绪"
 else
-  echo "⚠️  下载失败，尝试用系统 node..."
-  which node && cp "$(which node)" node_bin/ 2>/dev/null || echo "⚠️  无系统 node"
+    echo "⚠️ crypto-js 未安装，手动安装..."
+    npm install crypto-js 2>&1 || true
 fi
 
-echo "✅ Vercel build 完成"
+# 安装 Python 依赖
+echo "📦 安装 Python 依赖..."
+pip install -r requirements.txt
+
+echo "✅ 构建完成"
