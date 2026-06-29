@@ -1,0 +1,27 @@
+笔记id: 688b9255000000002501c135
+笔记url: https://www.xiaohongshu.com/explore/688b9255000000002501c135?xsec_token=ABBukzzpIKOIX-lMp3msyUvGJTpMWfSjwc5C6SCzSJnsw=
+笔记类型: 图集
+用户id: 64c3f392000000002b009e45
+用户主页url: https://www.xiaohongshu.com/user/profile/64c3f392000000002b009e45
+昵称: 魔法师盖瑞
+头像url: https://sns-avatar-qc.xhscdn.com/avatar/1040g2jo31hdu5jc2jo5g5p63ue9ap7i5lt5h22g
+标题: 小红书黑客松「MagicQuestion」开发笔记
+描述: 和 ﻿@白熊﻿ 激战黑客松经验总结 [偷笑R]
+1️⃣ 从一个简单的需求点逐渐扩展出线和面，享受到了让一个项目从模糊到清晰、灵感迸发的过程
+2️⃣ MVP 验证核心功能：使用 Web 技术和框架（刚好也是自己擅长的），快速迭代
+3️⃣ 在 AI 帮助下，最花时间的部分已经不是开发，而是发掘和确认想法
+4️⃣ 和团队成员与内测用户多讨论，人多力量大，开脑洞
+5️⃣ 设计的时候寻找参考，站在巨人的肩膀上，平常也需要多体验和思考各类产品
+	
+（剩下正文看图，有点学术 [doge]）
+﻿#夏天属于黑客松[话题]#﻿  ﻿#Google开发者大会[话题]#﻿  ﻿#BuildInPublic[话题]#﻿  ﻿#心灵成长[话题]#﻿  ﻿#社交神器[话题]#﻿  ﻿#独立开发[话题]#﻿  ﻿#AI开发[话题]#﻿
+点赞数量: 18
+收藏数量: 6
+评论数量: 2
+分享数量: 7
+视频封面url: None
+视频地址url: None
+图片地址url列表: ['http://sns-webpic-qc.xhscdn.com/202606291437/56b7cb48c1221721f67b6ce35e42c5aa/spectrum/1040g0k031kk0dtr2k8005p63ue9ap7i50lefsc0!nd_dft_wlteh_webp_3', 'http://sns-webpic-qc.xhscdn.com/202606291437/0ddc777033c044d0a81395e084628df7/spectrum/1040g0k031kjvq364j62g5p63ue9ap7i5epaba6o!nd_dft_wlteh_webp_3', 'http://sns-webpic-qc.xhscdn.com/202606291437/a9848cb34eff84707e68a57d7a78b8cb/spectrum/1040g0k031kjvq364j6205p63ue9ap7i56s728jg!nd_dft_wlteh_webp_3', 'http://sns-webpic-qc.xhscdn.com/202606291437/77625f1c2c51b32df5f208d2dcbf8638/spectrum/1040g0k031kjvq364j61g5p63ue9ap7i5rhqjdbo!nd_dft_wlteh_webp_3', 'http://sns-webpic-qc.xhscdn.com/202606291437/e01e730e40392accd364a28eeb3c3440/spectrum/1040g0k031kjvq364j6105p63ue9ap7i5qdt6vd8!nd_dft_wlteh_webp_3', 'http://sns-webpic-qc.xhscdn.com/202606291437/776bbb8c84c0cb9fdb94b4fd39ee443a/spectrum/1040g0k031kjvq364j60g5p63ue9ap7i5jfn812o!nd_dft_wlteh_webp_3']
+标签: ['夏天属于黑客松', 'Google开发者大会', 'BuildInPublic', '心灵成长', '社交神器', '独立开发', 'AI开发']
+上传时间: 2025-07-31 23:57:09
+ip归属地: 未知

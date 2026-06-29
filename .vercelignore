@@ -1,0 +1,14 @@
+.env
+.git
+.gitignore
+**pycache**/
+\*.pyc
+datas/
+.DS_Store
+start_prod.bat
+DEPLOY.md
+run.py
+Dockerfile
+Dockerfile.prod
+README.md
+node_modules/

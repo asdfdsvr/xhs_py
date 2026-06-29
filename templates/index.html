@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小红书笔记抓取工具</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #fce4ec 0%, #fff3e0 50%, #f3e5f5 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 860px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 8px 32px rgba(255, 56, 92, 0.12);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .logo-icon {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, #ff385c, #ff6b35);
+            border-radius: 18px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            color: white;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 16px rgba(255, 56, 92, 0.3);
+        }
+
+        .logo h1 {
+            font-size: 26px;
+            font-weight: 700;
+            color: #1a1a2e;
+            letter-spacing: -0.5px;
+        }
+
+        .logo p {
+            color: #666;
+            font-size: 14px;
+            margin-top: 6px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        label .tip {
+            font-weight: 400;
+            color: #999;
+            font-size: 12px;
+        }
+
+        textarea,
+        input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #eee;
+            border-radius: 12px;
+            font-size: 14px;
+            transition: all 0.3s;
+            font-family: inherit;
+            background: #fafafa;
+            outline: none;
+        }
+
+        textarea:focus,
+        input:focus {
+            border-color: #ff385c;
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(255, 56, 92, 0.08);
+        }
+
+        textarea {
+            resize: vertical;
+            font-size: 13px;
+            word-break: break-all;
+        }
+
+        #cookies {
+            height: 100px;
+        }
+
+        #note_urls {
+            height: 140px;
+        }
+
+        .btn {
+            height: 52px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 0 24px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #ff385c, #ff6b35);
+            color: white;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(255, 56, 92, 0.35);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #43a047, #66bb6a);
+            color: white;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(67, 160, 71, 0.35);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: #999;
+            border: 2px solid #e0e0e0;
+        }
+
+        .btn-outline:hover {
+            border-color: #ff385c;
+            color: #ff385c;
+        }
+
+        .btn-sm {
+            height: 42px;
+            font-size: 14px;
+            padding: 0 18px;
+        }
+
+        .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .btn.loading .spinner {
+            display: inline-block;
+        }
+
+        .btn.loading .btn-text {
+            display: none;
+        }
+
+        .progress-bar {
+            display: none;
+            margin-top: 20px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            overflow: hidden;
+            height: 28px;
+            position: relative;
+        }
+
+        .progress-bar.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #ff385c, #ff6b35);
+            border-radius: 10px;
+            transition: width 0.4s ease;
+        }
+
+        .progress-text {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .toolbar {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .toolbar .btn {
+            flex: 1;
+            min-width: 140px;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stats-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: #fafafa;
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .stat-card .num {
+            font-size: 28px;
+            font-weight: 700;
+            color: #ff385c;
+        }
+
+        .stat-card .label {
+            font-size: 13px;
+            color: #999;
+            margin-top: 4px;
+        }
+
+        .result-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            margin-top: 12px;
+        }
+
+        .result-table th {
+            background: #fafafa;
+            padding: 10px 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #555;
+            border-bottom: 2px solid #eee;
+            position: sticky;
+            top: 0;
+            white-space: nowrap;
+        }
+
+        .result-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #f0f0f0;
+            color: #333;
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .result-table tr:hover td {
+            background: #fafafa;
+        }
+
+        .result-table .status-badge {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .status-ok {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .status-fail {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .result-table-wrap {
+            max-height: 500px;
+            overflow-y: auto;
+            border-radius: 12px;
+            border: 1px solid #eee;
+        }
+
+        .error-msg {
+            display: none;
+            margin-top: 16px;
+            padding: 14px 16px;
+            background: #fff0f0;
+            border: 1px solid #ffcdd2;
+            border-radius: 12px;
+            color: #c62828;
+            font-size: 14px;
+        }
+
+        .error-msg.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .success-banner {
+            display: none;
+            margin-top: 16px;
+            padding: 14px 16px;
+            background: #e8f5e9;
+            border: 1px solid #c8e6c9;
+            border-radius: 12px;
+            color: #2e7d32;
+            font-size: 14px;
+        }
+
+        .success-banner.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 24px;
+            color: #bbb;
+            font-size: 13px;
+        }
+
+        .how-to {
+            margin-top: 24px;
+            padding: 16px 20px;
+            background: #f8f9ff;
+            border-radius: 12px;
+            font-size: 13px;
+            color: #666;
+            line-height: 1.8;
+        }
+
+        .how-to summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: #444;
+        }
+
+        .how-to ol {
+            margin-top: 8px;
+            padding-left: 20px;
+        }
+
+        .how-to code {
+            background: #e8e8e8;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .count-badge {
+            display: inline-block;
+            background: #ff385c;
+            color: white;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        .result-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .result-header h2 {
+            font-size: 18px;
+            color: #333;
+        }
+
+        @media (max-width: 600px) {
+            .card {
+                padding: 24px 20px;
+            }
+
+            .stats-summary {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .logo h1 {
+                font-size: 22px;
+            }
+
+            .toolbar {
+                flex-direction: column;
+            }
+
+            .toolbar .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="logo">
+                <div class="logo-icon">📕</div>
+                <h1>小红书笔记抓取工具</h1>
+                <p>批量抓取笔记信息，一键导出 Excel 表格</p>
+            </div>
+
+            <form id="scrapeForm">
+                <div class="form-group">
+                    <label for="cookies">
+                        Cookie
+                        <span class="tip">（登录小红书后从浏览器复制）</span>
+                    </label>
+                    <textarea id="cookies" name="cookies" placeholder="粘贴你的小红书 Cookie ..." required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="note_urls">
+                        笔记链接
+                        <span class="tip">（每行一个，支持批量）</span>
+                    </label>
+                    <textarea id="note_urls" name="note_urls"
+                        placeholder="https://www.xiaohongshu.com/explore/...?xsec_token=..." required></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary" id="submitBtn">
+                    <span class="btn-text">🔍 开始批量抓取</span>
+                    <span class="spinner"></span>
+                </button>
+            </form>
+
+            <div class="progress-bar" id="progressBar">
+                <div class="progress-fill" id="progressFill"></div>
+                <div class="progress-text" id="progressText">0/0</div>
+            </div>
+
+            <div class="error-msg" id="errorMsg"></div>
+            <div class="success-banner" id="successBanner"></div>
+
+            <div class="result" id="result"
+                style="display:none; margin-top: 28px; padding-top: 28px; border-top: 2px solid #f0f0f0;">
+                <div class="result-header">
+                    <h2>📊 抓取结果</h2>
+                    <span class="count-badge" id="resultCount">0 条</span>
+                </div>
+
+                <div class="stats-summary" id="statsSummary"></div>
+
+                <div class="toolbar" id="toolbar">
+                    <button class="btn btn-success btn-sm" onclick="downloadExcel()">
+                        📥 下载 Excel 表格
+                    </button>
+                    <button class="btn btn-outline btn-sm" onclick="clearData()">
+                        🗑️ 清空数据
+                    </button>
+                </div>
+
+                <div class="result-table-wrap" id="tableWrap" style="margin-top:16px;">
+                    <table class="result-table" id="resultTable">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>状态</th>
+                                <th>标题</th>
+                                <th>作者</th>
+                                <th>类型</th>
+                                <th>点赞</th>
+                                <th>收藏</th>
+                                <th>评论</th>
+                                <th>时间</th>
+                            </tr>
+                        </thead>
+                        <tbody id="resultBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <details class="how-to">
+                <summary>📖 如何获取 Cookie？</summary>
+                <ol>
+                    <li>在浏览器中打开 <a href="https://www.xiaohongshu.com" target="_blank">xiaohongshu.com</a> 并登录</li>
+                    <li>按 <code>F12</code> 打开开发者工具</li>
+                    <li>切换到 <strong>网络 (Network)</strong> 标签</li>
+                    <li>刷新页面，点击任意请求（如 <code>homefeed</code>）</li>
+                    <li>在请求头中找到 <code>cookie</code> 字段，右键复制值</li>
+                    <li>粘贴到上方 Cookie 输入框中</li>
+                </ol>
+            </details>
+        </div>
+        <div class="footer">仅供学习交流使用 · 数据来源于小红书公开接口</div>
+    </div>
+
+    <script>
+        let scrapedCount = 0;
+
+        document.getElementById('scrapeForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const btn = document.getElementById('submitBtn');
+            const errorMsg = document.getElementById('errorMsg');
+            const successBanner = document.getElementById('successBanner');
+            const progressBar = document.getElementById('progressBar');
+            const progressFill = document.getElementById('progressFill');
+            const progressText = document.getElementById('progressText');
+
+            errorMsg.classList.remove('show');
+            successBanner.classList.remove('show');
+            btn.classList.add('loading');
+            btn.disabled = true;
+
+            const formData = new FormData();
+            formData.append('cookies', document.getElementById('cookies').value);
+            formData.append('note_urls', document.getElementById('note_urls').value);
+
+            try {
+                const res = await fetch('/scrape', { method: 'POST', body: formData });
+                const data = await res.json();
+
+                if (data.success) {
+                    renderResults(data.results);
+                    const ok = data.results.filter(r => r.success).length;
+                    successBanner.textContent = `✅ 抓取完成！成功 ${ok} 条，失败 ${data.results.length - ok} 条`;
+                    successBanner.classList.add('show');
+                } else {
+                    showError(data.error || '抓取失败');
+                }
+            } catch (err) {
+                showError('网络错误: ' + err.message);
+            } finally {
+                btn.classList.remove('loading');
+                btn.disabled = false;
+                progressBar.classList.remove('show');
+            }
+        });
+
+        function renderResults(results) {
+            const tbody = document.getElementById('resultBody');
+            const resultDiv = document.getElementById('result');
+            const countBadge = document.getElementById('resultCount');
+
+            tbody.innerHTML = '';
+            const okItems = results.filter(r => r.success);
+
+            let totalLiked = 0, totalCollected = 0, totalComment = 0;
+
+            results.forEach((r, i) => {
+                const tr = document.createElement('tr');
+                if (r.success) {
+                    const d = r.data;
+                    totalLiked += parseInt(d.liked_count) || 0;
+                    totalCollected += parseInt(d.collected_count) || 0;
+                    totalComment += parseInt(d.comment_count) || 0;
+                    tr.innerHTML = `
+                        <td>${i + 1}</td>
+                        <td><span class="status-badge status-ok">✅ 成功</span></td>
+                        <td title="${d.title}">${d.title}</td>
+                        <td>${d.nickname}</td>
+                        <td>${d.note_type}</td>
+                        <td>${d.liked_count}</td>
+                        <td>${d.collected_count}</td>
+                        <td>${d.comment_count}</td>
+                        <td>${d.upload_time}</td>
+                    `;
+                } else {
+                    tr.innerHTML = `
+                        <td>${i + 1}</td>
+                        <td><span class="status-badge status-fail">❌ 失败</span></td>
+                        <td colspan="7" title="${r.error}" style="color:#c62828;">${r.error}</td>
+                    `;
+                }
+                tbody.appendChild(tr);
+            });
+
+            // Summary stats
+            const summary = document.getElementById('statsSummary');
+            summary.innerHTML = `
+                <div class="stat-card">
+                    <div class="num">${okItems.length}</div>
+                    <div class="label">✅ 成功条数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="num">${results.length - okItems.length}</div>
+                    <div class="label">❌ 失败条数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="num">${totalLiked.toLocaleString()}</div>
+                    <div class="label">❤️ 总点赞</div>
+                </div>
+                <div class="stat-card">
+                    <div class="num">${totalCollected.toLocaleString()}</div>
+                    <div class="label">📌 总收藏</div>
+                </div>
+            `;
+
+            countBadge.textContent = `${okItems.length} 条`;
+            resultDiv.style.display = 'block';
+            resultDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function downloadExcel() {
+            window.location.href = '/download_excel';
+        }
+
+        async function clearData() {
+            if (!confirm('确定清空当前会话的所有抓取数据吗？')) return;
+            try {
+                await fetch('/clear_data', { method: 'POST' });
+                document.getElementById('result').style.display = 'none';
+                document.getElementById('successBanner').classList.remove('show');
+            } catch (err) {
+                showError('清空失败: ' + err.message);
+            }
+        }
+
+        function showError(msg) {
+            const el = document.getElementById('errorMsg');
+            el.textContent = '❌ ' + msg;
+            el.classList.add('show');
+        }
+    </script>
+</body>
+
+</html>
