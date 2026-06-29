@@ -8,10 +8,11 @@ from spider.spider import Data_Spider
 from xhs_utils.data_util import save_to_xlsx
 from xhs_utils.common_util import init
 
-# ── Vercel 环境适配 ────────────────────────────────────
+# ── 云平台环境适配（Vercel / Render 等） ──────────────
 _IS_VERCEL = os.environ.get('VERCEL', '') == '1'
+_IS_RENDER = os.environ.get('RENDER', '') == '1'
 
-if _IS_VERCEL:
+if _IS_VERCEL or _IS_RENDER:
     # 1) 把 node_bin 加入 PATH，确保 execjs 能找到 Node.js
     _node_bin = os.path.join(os.path.dirname(__file__), 'node_bin', 'bin')
     if os.path.isdir(_node_bin):
